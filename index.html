@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>경험치 계산기</title>
+  <title>경험치 효율 계산기</title>
   <style>
     body {
       font-family: 'Noto Sans KR', Arial, sans-serif;
@@ -46,20 +46,6 @@
     .time-inputs input {
       width: 60px;
     }
-    button {
-      background: #0d6efd;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 24px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #0b5ed7;
-    }
     #result {
       margin-top: 18px;
       font-size: 1.1rem;
@@ -73,15 +59,14 @@
     <h2>경험치 효율 계산기</h2>
     <label>경과 시간</label>
     <div class="time-inputs">
-      <input type="number" id="hours" min="0" placeholder="시간" value="0">
+      <input type="number" id="hours" min="0" placeholder="시간" value="" oninput="calculate()">
       <span>시간</span>
-      <input type="number" id="minutes" min="0" max="59" placeholder="분" value="0">
+      <input type="number" id="minutes" min="0" max="59" placeholder="분" value="" oninput="calculate()">
       <span>분</span>
     </div>
     <label for="exp">누적 경험치</label>
-    <input type="number" id="exp" min="0" placeholder="예: 24000">
+    <input type="number" id="exp" min="0" placeholder="예: 24000" value="" oninput="calculate()">
     <br>
-    <button onclick="calculate()">계산하기</button>
     <div id="result"></div>
   </div>
   <script>
@@ -91,6 +76,16 @@
       const exp = parseInt(document.getElementById('exp').value, 10);
 
       const resultDiv = document.getElementById('result');
+
+      // 입력이 모두 비어있을 때는 결과를 지움
+      if (
+        document.getElementById('hours').value === "" &&
+        document.getElementById('minutes').value === "" &&
+        document.getElementById('exp').value === ""
+      ) {
+        resultDiv.textContent = "";
+        return;
+      }
 
       if ((hours === 0 && minutes === 0) || isNaN(exp) || exp < 0) {
         resultDiv.textContent = '경과 시간과 누적 경험치를 올바르게 입력하세요.';
@@ -114,6 +109,14 @@
       `;
       resultDiv.style.color = '#198754';
     }
+
+    // 페이지 로드 시 입력값/결과 초기화
+    window.onload = function() {
+      document.getElementById('hours').value = "";
+      document.getElementById('minutes').value = "";
+      document.getElementById('exp').value = "";
+      document.getElementById('result').textContent = "";
+    };
   </script>
 </body>
 </html>
