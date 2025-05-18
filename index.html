@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>경험치 효율 계산기</title>
+  <title>경험치 계산기</title>
   <style>
     body {
       font-family: 'Noto Sans KR', Arial, sans-serif;
@@ -52,11 +52,17 @@
       color: #198754;
       font-weight: bold;
     }
+    .levelup {
+      margin-top: 8px;
+      color: #0d6efd;
+      font-weight: 500;
+      font-size: 1.05em;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>경험치 효율 계산기</h2>
+    <h2>경험치 계산기</h2>
     <label>경과 시간</label>
     <div class="time-inputs">
       <input type="number" id="hours" min="0" placeholder="시간" value="" oninput="calculate()">
@@ -66,6 +72,8 @@
     </div>
     <label for="exp">누적 경험치</label>
     <input type="number" id="exp" min="0" placeholder="예: 24000" value="" oninput="calculate()">
+    <label for="remain">잔여 경험치 (레벨업까지)</label>
+    <input type="number" id="remain" min="0" placeholder="예: 12000" value="" oninput="calculate()">
     <br>
     <div id="result"></div>
   </div>
@@ -74,6 +82,7 @@
       const hours = parseInt(document.getElementById('hours').value, 10) || 0;
       const minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
       const exp = parseInt(document.getElementById('exp').value, 10);
+      const remain = parseInt(document.getElementById('remain').value, 10);
 
       const resultDiv = document.getElementById('result');
 
@@ -81,7 +90,8 @@
       if (
         document.getElementById('hours').value === "" &&
         document.getElementById('minutes').value === "" &&
-        document.getElementById('exp').value === ""
+        document.getElementById('exp').value === "" &&
+        document.getElementById('remain').value === ""
       ) {
         resultDiv.textContent = "";
         return;
@@ -103,10 +113,20 @@
       const perMinute = Math.floor(exp / totalMinutes);
       const perHour = Math.floor(exp / (totalMinutes / 60));
 
-      resultDiv.innerHTML = `
+      let html = `
         분당 경험치: <strong>${perMinute.toLocaleString()}</strong><br>
         시간당 경험치: <strong>${perHour.toLocaleString()}</strong>
       `;
+
+      // 잔여 경험치가 입력된 경우, 레벨업까지 남은 시간 계산
+      if (!isNaN(remain) && remain > 0 && perHour > 0) {
+        const remainMinutes = Math.ceil(remain / perMinute);
+        const levelupHours = Math.floor(remainMinutes / 60);
+        const levelupMinutes = remainMinutes % 60;
+        html += `<div class="levelup">레벨업까지 예상 시간: <strong>${levelupHours}시간 ${levelupMinutes}분 후</strong></div>`;
+      }
+
+      resultDiv.innerHTML = html;
       resultDiv.style.color = '#198754';
     }
 
@@ -115,6 +135,7 @@
       document.getElementById('hours').value = "";
       document.getElementById('minutes').value = "";
       document.getElementById('exp').value = "";
+      document.getElementById('remain').value = "";
       document.getElementById('result').textContent = "";
     };
   </script>
